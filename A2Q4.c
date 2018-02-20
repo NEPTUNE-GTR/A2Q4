@@ -23,10 +23,6 @@
 #define MAX_BUFFERSIZE 4
 #define checking(string, val){if (val) { printf("Failed with %ld @ %s", val, string); exit(1);} }
 
-Boolean isEmpty;
-
-
-PrintRequest BoundedBuffer[MAX_BUFFERSIZE];
 //-------------------------------------------------------------------------------------
 // PROTOTYPES
 //-------------------------------------------------------------------------------------
@@ -41,31 +37,47 @@ int main(int argc, const char * const argv[])
     int  numPrintClients;
     int  numPrinters;
     long rc;
-    //playing the role of the OS code that is managing each printer
-    pthread_t printServers[numPrinters];
 
-    //applications requesting printing
-    pthread_t printClients[numPrintClients];
+    PrintRequest BoundedBuffer[MAX_BUFFERSIZE];
+    CircularBuffer buffer;
 
     assert(argc == 3);
     assert(argv != NULL);
+
 
     if(argc == 3 && argv != NULL)
     {
         numPrintClients = atoi(argv[1]);
         numPrinters     = atoi(argv[2]);
     }
+    else
+    {
+        exit(1);
+    }
+
+
+    buffer.size   = MAX_BUFFERSIZE;
+    buffer.buffer = BoundedBuffer;
+    buffer.count  = 0;
+    bufferInit(&buffer);
+
+
+    //playing the role of the OS code that is managing each printer
+    pthread_t printServers[numPrinters];
+    //applications requesting printing
+    pthread_t printClients[numPrintClients];
+
 
     for(int i = 0; i < numPrinters; i ++)
     {
         rc = pthread_create(&printServers[i], NULL, printServerCode, NULL);
-        checking("Faile at creating print server with value: ", rc);
+        checking("Failed at creating print server with value: ", rc);
     }
 
     for(int j = 0; j < numPrintClients; j++)
     {
         rc = pthread_create(&printClients[j], NULL, printClientCode, NULL);
-        checking("Faile at creating print client with value: ", rc);
+        checking("Failed at creating print client with value: ", rc);
 
     }
     pthread_exit(NULL);
@@ -75,14 +87,14 @@ int main(int argc, const char * const argv[])
 //-------------------------------------------------------------------------------------
 void * printClientCode(void * tid)
 {
-    long   pthreadId = (long)pthread_self();
-    char * fileName  = "File";
+    // long   pthreadId = (long)pthread_self();
+    // char * fileName  = "File";
 
-    for(int i = 0; i < 6; i ++)
-    {
-        bufferInsert();
+    // for(int i = 0; i < 6; i ++)
+    // {
+    //     bufferInsert();
         
-    }
+    // }
 
     pthread_exit(NULL);
 }
