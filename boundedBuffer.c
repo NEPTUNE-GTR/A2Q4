@@ -3,8 +3,8 @@
 #include <pthread.h>
 #include "boundedBuffer.h"
 
-pthread_mutex_t lock      = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  condition = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t lock      = PTHREAD_MUTEX_INITIALIZER;
 
 
 int bufferInit(CircularBuffer * buffer)
@@ -13,20 +13,21 @@ int bufferInit(CircularBuffer * buffer)
     
     if(buffer != NULL)
     {
-        result = 0;
         buffer->head = 0;
         buffer->tail = 0;
+        result       = 0;
     }
     return result;
 }
 
-int bufferInsert()
+int bufferInsert(const char * string, int fileSize)
 {
     pthread_mutex_lock(&lock);  //tofinish this convar........................
-    while(true)
-    {
+    // while(true)
+    // {
         
-    }
+    // }
+    pthread_mutex_unlock(&lock);
     return 0;
 }
 
