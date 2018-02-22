@@ -26,11 +26,11 @@ typedef struct
 // prototype definitions for the list operations
 int bufferInit(CircularBuffer * buffer);
 
-int bufferInsert(const char * string, int fileSize);
+int bufferInsert(CircularBuffer * buffer, const char * string, int fileSize);
 
-int buffertDelete();
+int buffertDelete(CircularBuffer * buffer);
 
-int bufferSearch();
+int bufferSearch(CircularBuffer * buffer, const char * string);
 
 Boolean bufferIsFull(CircularBuffer buffer);
 
