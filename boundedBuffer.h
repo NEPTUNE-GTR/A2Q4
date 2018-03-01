@@ -10,30 +10,16 @@ typedef struct PR
     int    fileSize;
 } PrintRequest, *PrintRequestPTR;
 
+int bufferInsert(PrintRequest * buffer, char * string, int fileSize);
 
-typedef struct
-{
-    //unsigned because head, tail, and size should not be negative
-    size_t head;
-    size_t tail;
-    size_t size;     //size of the buffer
-    size_t count;    //current number of items in the buffer
+int buffertDelete(PrintRequest * buffer, char ** resultString);
 
-    PrintRequest * buffer; 
-} CircularBuffer;
+int bufferSearch(PrintRequest * buffer, const char * string);
 
 
-// prototype definitions for the list operations
-int bufferInit(CircularBuffer * buffer);
+//these two functions are implemented but not needed for this question
+Boolean bufferIsFull(PrintRequest buffer);
 
-int bufferInsert(CircularBuffer * buffer, const char * string, int fileSize);
-
-int buffertDelete(CircularBuffer * buffer);
-
-int bufferSearch(CircularBuffer * buffer, const char * string);
-
-Boolean bufferIsFull(CircularBuffer buffer);
-
-Boolean bufferIsEmpty(CircularBuffer buffer);
+Boolean bufferIsEmpty(PrintRequest buffer);
 
 #endif 

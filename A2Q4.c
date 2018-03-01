@@ -7,13 +7,15 @@
 #include <limits.h>
 #include "boundedBuffer.h"
 //-------------------------------------------------------------------------------------
-// Course:     COMP3430
-// Section:    A01
-// Assignment: 2, question 4
-// Name:       Eddie Torres
-// UM-ID:      umtorre8
-// Semester:   Winter, 2018
-// Description- 
+// Course:      COMP3430
+// Section:     A01
+// Assignment:  2, question 4
+// Name:        Eddie Torres
+// UM-ID:       umtorre8
+// Semester:    Winter, 2018
+// Description- Using pthreads, I created a C program that implements
+//              the key functionality of a multi-threaded print managager
+//              this is ofcourse an implemen 
 //              
 //              
 //-------------------------------------------------------------------------------------
@@ -27,8 +29,8 @@
 #define checking(string, value){if (value) { printf("Failed with %ld @ %s", value, string); exit(1);} }
 
 
-CircularBuffer buffer;
-PrintRequest   BoundedBuffer[MAX_BUFFERSIZE];
+
+PrintRequest BoundedBuffer[MAX_BUFFERSIZE];
 //-------------------------------------------------------------------------------------
 // PROTOTYPES
 //-------------------------------------------------------------------------------------
@@ -60,17 +62,6 @@ int main(int argc, const char * const argv[])
         exit(1);
     }
 
-    buffer.size   = MAX_BUFFERSIZE;
-    buffer.buffer = BoundedBuffer;
-    buffer.count  = 0;
-
-    if(bufferInit(&buffer) == -1)
-    {
-        printf("Error initalizing the buffer");
-        exit(1);
-    }   
-
-
     //playing the role of the OS code that is managing each printer
     pthread_t printServers[numPrinters];
     //applications requesting printing
@@ -87,7 +78,15 @@ int main(int argc, const char * const argv[])
         rc = pthread_create(&printClients[j], NULL, printClientCode, NULL);
         checking("Failed at creating print client with value: ", rc);
     }
-
+    
+    for(int k = 0; k < numPrinters; k++)
+    {
+		pthread_join(printServers[k],NULL);
+    }
+    for(int s = 0; s < numPrintClients; s++)
+    {
+		pthread_join(printClients[s],NULL);
+    }
     pthread_exit(NULL);
     return EXIT_SUCCESS;
 }
@@ -117,10 +116,10 @@ void * printClientCode(void * tid)
 
         printf("%s\n",string);
 
-        if(bufferInsert(&buffer, string, fileSize) == 0)
+        if(bufferInsert(BoundedBuffer, string, fileSize) == 0)
         {
             printf("File size: %d\n", fileSize);
-            printf("%d: Hi, I am thread:'%ld'\n", i, (long)pthread_self());
+            printf("****INSERTING****\n%d: Hi, I am thread:'%ld'\n****END of INSERTING****\n", i, (long)pthread_self());
 
 
             sleep((rand() % (0 - 3)) + 3);
@@ -138,8 +137,16 @@ void * printClientCode(void * tid)
 //-------------------------------------------------------------------------------------
 void * printServerCode(void * tid)
 {
-    
+    char * result = NULL;
+    while(true)
+    {
+        if(buffertDelete(BoundedBuffer, &result) == 0)
+        {
+            printf("****DELETED****\n: Hi, I am thread:'%ld'\nThis is the info from the printRequest %s\n****END of DELETED****\n",
+             (long)pthread_self(), result);
 
+        }
+    }
     pthread_exit(NULL);
 }
 //-------------------------------------------------------------------------------------
